@@ -1,7 +1,4 @@
 .board{
-  --size:40vw;
-  width: var(--size);
-  /* height: var(--size); */
   background-color: rgb(252, 252, 252);
   /* border-radius: 1vw; */
   display: flex;
@@ -39,8 +36,6 @@ button:hover{
 }
 
 .section{
-  width: 33%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   /* justify-content: center; */
@@ -87,6 +82,7 @@ button:hover{
 input{
   border: unset;
   margin: .1vw;
+  caret-color: transparent;
 }
 .buttons{
   display: flex;
@@ -104,3 +100,56 @@ input{
   color: rgb(255, 255, 255);
   transition:0.1s ease-in-out;
 }
+
+@media screen and (min-width:1100px) { 
+  .board{
+    --size:40vw;
+  }
+  .section-row{
+    width: 40vw;
+    height: 10vw;
+  }
+  
+}
+
+@media screen and (max-width:1100px) { 
+
+  .section-row{
+    height: 18vw;
+  }
+  button{
+    width: 33vw;
+    height: 10vw;
+    font-size: 3vw;
+  }
+  
+}
+@media screen and (max-width:800) { 
+
+  .section-row{
+    height: 25vw;
+  }
+  button{
+    width: 33vw;
+    height: 10vw;
+    font-size: 3vw;
+  }
+  
+}
+
+/* Be responsive on phone*/
+@media screen and (max-width:600px) { 
+  .board{
+    --size:80vw;
+  }
+  .section-row{
+    width: 80vw;
+    height: 20vw;
+  }
+  button{
+    height: 20vw;
+    font-size: 6vw;
+  }
+  
+}
+

@@ -11,7 +11,8 @@ class Sudoku extends React.Component{
     this.state={
       // 9x9 grid
       sections: games['saved_games'][0],//Array(9).fill(0).map(()=> (Array(9).fill(''))),
-      focusNum:0
+      focusNum:0,
+      focus_loc:[null,null]
     }
   }
   editBox = (Sectionidx,Boxidx,value)=>{
@@ -25,9 +26,9 @@ class Sudoku extends React.Component{
     }
 }
 
-focusBox = (value)=>{
+focusBox = (value, sec_idx, box_idx)=>{
   if(value !== "")  this.setState({focusNum:value})
-  else this.setState({focusNum:0})
+  else this.setState({focusNum:0, focus_loc:[sec_idx,box_idx]})
 }
 
 
@@ -39,6 +40,7 @@ focusBox = (value)=>{
         <Board sections={this.state.sections} 
                 editBox={this.editBox} focusBox={this.focusBox}
                 focusNum={this.state.focusNum}
+                focus_loc={this.state.focus_loc}
                 />
         <div className='buttons'>
           <button onClick={()=>{sectionsCopy=JSON.parse(JSON.stringify(this.state.sections));this.solveSudoku()}}> Solve </button>
@@ -157,7 +159,7 @@ class Section extends React.Component{
               value={this.props.values[box_idx]}
               onBeforeInput={()=>{this.props.editBox(sec_idx,box_idx,'')}}
               onInput={(e)=>{this.props.editBox(sec_idx,box_idx,e.target.value)}}
-              onFocus={()=>{this.props.focusBox(this.props.values[box_idx])}}
+              onFocus={()=>{this.props.focusBox(this.props.values[box_idx],sec_idx,box_idx)}}
               ></input>)
   }
   render() {
