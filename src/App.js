@@ -1,30 +1,54 @@
 import React from 'react';
 import { ReactDOM } from 'react';
 import './App.css';
+import games from "./games.json"
 
 class Sudoku extends React.Component{
   constructor(props){
     super(props)
     this.state={
       // 9x9 grid
-      sections: Array(9).fill(0).map(()=> (Array(9).fill('')))
+      sections: games['saved_games'][0],//Array(9).fill(0).map(()=> (Array(9).fill(''))),
+      focusNum:0
     }
   }
   editBox = (Sectionidx,Boxidx,value)=>{
-    let sections = this.state.sections.slice()
-    sections[Sectionidx][Boxidx] = value
-    this.setState({sections:sections})
+    
+    if(/[1-9]/g.test(value) || value === ''){
+        let sections = this.state.sections.slice()
+        sections[Sectionidx][Boxidx] = value
+        this.setState({sections:sections})
+        if(value !== "")  this.setState({focusNum:value})
+        else this.setState({focusNum:0})
+    }
 }
+
+focusBox = (value)=>{
+  if(value !== "")  this.setState({focusNum:value})
+  else this.setState({focusNum:0})
+}
+
+
   render(){
     return (
     <div className='center'>
         <div className='board'>
-        <Board sections={this.state.sections} editBox={this.editBox}/>
+        <Board sections={this.state.sections} 
+                editBox={this.editBox} focusBox={this.focusBox}
+                focusNum={this.state.focusNum}
+                />
         </div>
         <div className='buttons'>
           <button> Solve </button>
-          <button onClick={()=>{this.setState({ sections: Array(9).fill(0).map(()=> (Array(9).fill('')))
-})}}> Reset </button>
+          <button 
+          onClick={()=>{
+                  this.setState(
+                    { 
+                      sections: Array(9).fill(0).map(()=> (Array(9).fill('')))
+                    })
+                  }
+              }>
+           Reset </button>
         </div>
 
     </div>
@@ -44,7 +68,12 @@ class Board extends React.Component{
 
 
 
-    return <Section duplicates={duplicates} sectionNum={i} values={this.props.sections[i-1]} editBox={this.props.editBox}/>
+    return <Section duplicates={duplicates} sectionNum={i} 
+                    values={this.props.sections[i-1]}
+                    editBox={this.props.editBox}
+                    focusBox={this.props.focusBox}
+                    focusNum={this.props.focusNum}
+                    />
   }
   // it will have 9 3x3 section
   render(){
@@ -69,6 +98,7 @@ class Board extends React.Component{
   }
 }
 
+// a section is the 9x9 block
 class Section extends React.Component{
 
   renderBox(BoxNum){
@@ -77,13 +107,16 @@ class Section extends React.Component{
     let box_idx = BoxNum-1
 
     let classes = ""
+    // making duplicates red
     if(this.props.duplicates.indexOf(box_idx) !== -1) {classes += "incorrect "}
-    
+    if(this.props.values[box_idx] === this.props.focusNum){classes+= "highlight "}
 
     return (<input type="text" className={'box ' + classes} maxLength="1" 
               value={this.props.values[box_idx]}
               onBeforeInput={()=>{this.props.editBox(sec_idx,box_idx,'')}}
-              onInput={(e)=>{this.props.editBox(sec_idx,box_idx,e.target.value)}}></input>)
+              onInput={(e)=>{this.props.editBox(sec_idx,box_idx,e.target.value)}}
+              onFocus={()=>{this.props.focusBox(this.props.values[box_idx])}}
+              ></input>)
   }
   render() {
     
@@ -118,7 +151,6 @@ class Section extends React.Component{
 function duplicates_in(section){
   let tracker = {}
   let duplicateIndex = []
-  // debugger  
   for(let i=0; i<9 ; i++){
     if(section[i] !== ''){
       tracker[section[i]] = tracker[section[i]]? tracker[section[i]]+1 : 1
@@ -133,6 +165,12 @@ function duplicates_in(section){
   return duplicateIndex 
 }
 
+/**
+ * @param {[int[]]} sections - Array of numbers of length 9
+ * @param {int} sectionidx - the nth section (index +1)
+ * 
+ * @return {int[]} duplicates - array of duplicate indexes
+*/
 function duplicates_in_row(sectionidx, sections){
 
   let duplicates = []
@@ -157,10 +195,17 @@ function duplicates_in_row(sectionidx, sections){
 
   return duplicates
 }
+
+/**
+ * @param {[int[]]} sections - Array of numbers of length 9
+ * @param {int} sectionidx - the nth section (index +1)
+ * 
+ * @return {int[]} duplicates - array of duplicate indexes
+ */
+
 function duplicates_in_col(sectionidx, sections){
 
   let duplicates = []
-  if(sectionidx===5)debugger
   for(let j=0;j<3;j++){
     // j is column number
     // We need to have a function that f(x)= 0 for x = 1,4,7; =1 for 2,5,8 and =2 for 3,6,9
@@ -180,5 +225,6 @@ function duplicates_in_col(sectionidx, sections){
 
   return duplicates
 }
+
 
 export default Sudoku;
