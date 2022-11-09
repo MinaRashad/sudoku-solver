@@ -4,6 +4,7 @@ import './App.css';
 import games from "./games.json"
 
 let sectionsCopy = []
+let finalAnswer = []
 class Sudoku extends React.Component{
   constructor(props){
     super(props)
@@ -91,7 +92,8 @@ focusBox = (value)=>{
           }
         }
       }
-      console.log(sectionsCopy)
+      finalAnswer=JSON.parse(JSON.stringify(sectionsCopy))
+      this.setState({sections:finalAnswer})
 
   }
 }
