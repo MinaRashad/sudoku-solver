@@ -3,6 +3,7 @@ import { ReactDOM } from 'react';
 import './App.css';
 import games from "./games.json"
 
+let sectionsCopy = []
 class Sudoku extends React.Component{
   constructor(props){
     super(props)
@@ -29,18 +30,18 @@ focusBox = (value)=>{
 }
 
 
+
+
   render(){
     return (
     <div className='center'>
-        <div className='board'>
         <Board sections={this.state.sections} 
                 editBox={this.editBox} focusBox={this.focusBox}
                 focusNum={this.state.focusNum}
                 />
-        </div>
         <div className='buttons'>
-          <button> Solve </button>
-          <button 
+          <button onClick={()=>{sectionsCopy=JSON.parse(JSON.stringify(this.state.sections));this.solveSudoku()}}> Solve </button>
+          <button className='clear'
           onClick={()=>{
                   this.setState(
                     { 
@@ -48,11 +49,50 @@ focusBox = (value)=>{
                     })
                   }
               }>
-           Reset </button>
+           Clear </button>
         </div>
 
     </div>
   );
+  }
+
+  isPossible(section_idx, box_idx, num){
+    let sections = JSON.parse(JSON.stringify(sectionsCopy))
+    // if there is a number already, then return false
+
+    // set num there
+    sections[section_idx][box_idx] = '' +num
+    let duplicates = [...duplicates_in(sections[section_idx]),
+                      ...duplicates_in_row(section_idx+1,sections),
+                      ...duplicates_in_col(section_idx+1,sections)]
+
+    if(duplicates.indexOf(box_idx) !== -1) return false
+
+    return true
+    
+  }
+  
+
+  solveSudoku = ()=>{
+      let sectionsCopy_ =sectionsCopy
+
+      for(let sect =0; sect< 9; sect++){
+        for(let box =0; box <9; box++){
+          if(sectionsCopy[sect][box] === ''){
+            for(let num=1; num<=9;num++){
+              if(this.isPossible(sect,box,num)){
+                sectionsCopy[sect][box]=''+num
+                this.solveSudoku()
+                sectionsCopy[sect][box]=''
+
+              }
+            }
+            return
+          }
+        }
+      }
+      console.log(sectionsCopy)
+
   }
 }
 
@@ -78,7 +118,7 @@ class Board extends React.Component{
   // it will have 9 3x3 section
   render(){
     //ReactDOM.render('div',)
-    return (<div>
+    return (<div className='board'>
         <div className="section-row">
           {this.renderSection(1)}
           {this.renderSection(2)}
