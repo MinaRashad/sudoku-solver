@@ -88,3 +88,10 @@ input{
   border: unset;
   margin: .1vw;
 }
+.buttons{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
