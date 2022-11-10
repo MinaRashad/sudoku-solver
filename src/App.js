@@ -10,7 +10,7 @@ class Sudoku extends React.Component{
     super(props)
     this.state={
       // 9x9 grid
-      sections: games['saved_games'][0],//Array(9).fill(0).map(()=> (Array(9).fill(''))),
+      sections: Array(9).fill(0).map(()=> (Array(9).fill(''))),
       focusNum:0,
       focus_loc:[null,null]
     }
@@ -44,6 +44,9 @@ focusBox = (value, sec_idx, box_idx)=>{
                 />
         <div className='buttons'>
           <button onClick={()=>{sectionsCopy=JSON.parse(JSON.stringify(this.state.sections));this.solveSudoku()}}> Solve </button>
+          <button onClick={()=>{
+            this.setState({sections:games['saved_games'][Math.round(Math.random()*(games['saved_games'].length-1))]})
+          }}>new game</button>
           <button className='clear'
           onClick={()=>{
                   this.setState(
